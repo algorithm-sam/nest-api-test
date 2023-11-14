@@ -22,8 +22,8 @@ jobs:
       run: |
         # Replace EC2_INSTANCE_IP with your EC2 instance's public IP or DNS
         ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@3.235.136.221 << 'EOF'
-          cd /etc/www/html/nest-api
+          cd /var/www/html/
           git pull origin main  # Replace 'main' with your branch name
           # Additional deployment steps, e.g., restart your application server
-          npm ci 
+          
         EOF
