@@ -21,6 +21,7 @@ jobs:
         REMOTE_USER: ${{ secrets.USERNAME }}
         TARGET: ${{ secrets.TARGET_DIR }}
 
+
     # - name: Deploy to EC2
     #   run: |
     #     # Replace EC2_INSTANCE_IP with your EC2 instance's public IP or DNS
