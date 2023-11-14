@@ -32,7 +32,7 @@
 $ npm install
 ```
 
-## Running the app
+## Running the nest app
 
 ```bash
 # development
