@@ -1,4 +1,4 @@
-name: Deploy nest-api-test to EC2
+name: Node.js CI/CD
 
 on:
   push:
@@ -6,33 +6,42 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
-    - name: webfactory/ssh-agent
-      uses: webfactory/ssh-agent@v0.8.0
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-            
+        node-version: '14'
 
-    # - name: Deploy to EC2
-    #   uses: easingthemes/ssh-deploy@main
-    #   env:
-    #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-    #     REMOTE_HOST: ${{ secrets.HOST_DNS }}
-    #     REMOTE_USER: ${{ secrets.USERNAME }}
-    #     TARGET: ${{ secrets.TARGET_DIR }}
+    - name: Install dependencies
+      run: npm install
 
+    - name: Format code
+      run: npm run format
 
-    - name: Deploy to EC2
-      run: |
-        # Replace EC2_INSTANCE_IP with your EC2 instance's public IP or DNS
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@ec2-3-87-202-128.compute-1.amazonaws.com << 'EOF'
-          cd /var/www/html/
-          git pull origin main  # Replace 'main' with your branch name
-          # Additional deployment steps, e.g., restart your application server
-          
-        EOF
+    - name: Run tests
+      run: npm test
+
+  # deploy:
+  #   runs-on: ubuntu-latest
+
+  #   needs: build
+
+  #   steps:
+  #   - name: Deploy to EC2
+  #     uses: appleboy/ssh-action@master
+  #     with:
+  #       host: ${{ secrets.EC2_HOST }}
+  #       username: ${{ secrets.EC2_USERNAME }}
+  #       key: ${{ secrets.EC2_PRIVATE_KEY }}
+  #       port: ${{ secrets.EC2_PORT }}
+  #       script: |
+  #         cd /path/to/your/app
+  #         git pull
+  #         npm install
+  #         npm run start
