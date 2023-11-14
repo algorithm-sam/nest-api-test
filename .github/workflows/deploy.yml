@@ -1,0 +1,29 @@
+name: Deploy nest-api-test to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install SSH Key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy to EC2
+      run: |
+        # Replace EC2_INSTANCE_IP with your EC2 instance's public IP or DNS
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@3.235.136.221 << 'EOF'
+          cd /etc/www/html/nest-api
+          git pull origin main  # Replace 'main' with your branch name
+          # Additional deployment steps, e.g., restart your application server
+          npm ci 
+        EOF
